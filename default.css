@@ -1,0 +1,23 @@
+div.separator{
+	
+	position: relative;
+	z-index: 10;
+	
+}
+
+div.separator p{
+	border:1px solid #fff;
+	font-size:11px;
+	font-family: sans-serif;
+	padding: 6px;
+
+}
+
+p.activeP{
+	border-color: #ddd;
+	border-radius: 4px;
+	background-color: #efefef;
+	padding: 6px;
+	width:500px;
+	margin:0 auto;	
+}
