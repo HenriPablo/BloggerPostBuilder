@@ -60,6 +60,7 @@ scriptFile = getClass().protectionDomain.codeSource.location.path
 
 
 def title = "";
+def commonFileName = "default";
 
 // use date as part of default post name
 date = new Date();
@@ -89,10 +90,13 @@ strArgs.each { param ->
 	
 	def p = param.split(":");
 	// replace spaces with underscores in title
-	if( p[0] == "title"){
-		p[1] = p[1].replaceAll( " ", "_")
-		defaultConfig.config.title = p[1];
-	}
+	if( p[0] == "title")
+		{
+			commonFileName = p[1].replaceAll( " ", "-")
+			p[1] = p[1].replaceAll( " ", "_")
+			defaultConfig.config.title = p[1];
+
+		}
 }
 //println defaultConfig;
 
@@ -114,16 +118,16 @@ if( customConfigFile.exists()){
 }
 
 /* DEFAULT CSS, JS file */
-def defaultCss = new File( scriptDir + "/default.css");
-def defaultJs = new File( scriptDir + "/default.js");
+def defaultCss = new File( scriptDir + "/" + commonFileName + ".css");
+def defaultJs = new File( scriptDir + "/" + commonFileName + ".js");
 
 
 if( !defaultCss.exists()){
-	new File( scriptDir + "/"  + "default.css").write("");
+	new File( scriptDir + "/" + commonFileName + ".css").write("");
 }
 
 if( !defaultJs.exists()){
-	new File( scriptDir + "/"  + "default.js").write("");
+	new File( scriptDir + "/" + commonFileName + ".js").write("");
 }
 
 
@@ -131,7 +135,7 @@ if( !defaultJs.exists()){
 def customHtml = new File( basePath + "/" + customConfig.config.title + ".html");
 
 if( !customHtml.exists()){
-	new File( basePath + "/" + customConfig.config.title + ".html" ).write("<h1>" + customConfig.config.title + "</h1>");
+	// make this optional: new File( basePath + "/" + customConfig.config.title + ".html" ).write("<h1>" + customConfig.config.title + "</h1>");
 	
 	/* if it didn't exist before, read in the one just created */
 	customHtml = new File( basePath + "/" + customConfig.config.title + ".html");
@@ -152,7 +156,11 @@ if( defaultCss.exists() ){
 
 /* JAVASCRIPT */
 
-if( customConfig.config.dev == true ){ /* include jQuery from CDN */	
+if( customConfig.config.dev == true ){ /* include jQuery from CDN */
+	/*
+		TODO: move this into config or at least allow for version to be arg based,
+	use some default version is not provided
+	*/
     outputString += '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>';
     outputString += '\n';
 }
@@ -239,15 +247,15 @@ def blockTxt( File file, String fileType, customConfig ){
     return '\n' + result + '\n'
 }
 
-def createFiles( String title ){
+def createFiles( String fileName ){
 
 	println "create() called!"
 	
 	basePath = new File(".").getCanonicalPath()
 	//println basePath
 	
-	new File( basePath + "/" + title + ".html").write("");
-	new File( basePath + "/" + title +  ".js").write("");
-	new File( basePath + "/" + title +  ".css").write("");
+	new File( basePath + "/" + fileName + ".html").write("");
+	new File( basePath + "/" + fileName +  ".js").write("");
+	new File( basePath + "/" + fileName +  ".css").write("");
 }
 
