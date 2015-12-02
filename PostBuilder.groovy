@@ -12,10 +12,6 @@ import sun.font.TrueTypeFont;
             and
         HTML
 
-    Write the final file to the same folder as the builder script:
-        %block-name%-Content-Block.html
-
-
 get path to root folder of the script
 CAUTION:
 this will work only when the script is run from the COMMAND LINE
@@ -82,9 +78,14 @@ def defaultConfig  = new ConfigSlurper().parse( new File( scriptDir + '/default.
 def strArgs = [];
 
 def s = this.args;
+
+print s;
+
 s.split(){
 	strArgs << it;
 }
+
+print strArgs;
 
 strArgs.each { param ->
 	
@@ -93,7 +94,7 @@ strArgs.each { param ->
 	if( p[0] == "title")
 		{
 			commonFileName = p[1].replaceAll( " ", "-")
-			p[1] = p[1].replaceAll( " ", "_")
+			p[1] = p[1].replaceAll( " ", "-")
 			defaultConfig.config.title = p[1];
 
 		}
@@ -183,12 +184,12 @@ if( customConfig.config.create == "all" ){
 }
 
 
-new File( basePath + "/" + customConfig.config.title + "_composit.html").write( outputString.trim() );
+new File( basePath + "/" + customConfig.config.title + "-composit.html").write( outputString.trim() );
 
 // open composit file in default browser
 // credit goes to: http://www.centerkey.com/java/browser/
 if( customConfig.config.preview == true){
-	String url = "file://${basePath}/${ customConfig.config.title }_composit.html";
+	String url = "file://${basePath}/${ customConfig.config.title }-composit.html";
 	java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
 }
 
