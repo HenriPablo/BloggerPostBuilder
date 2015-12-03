@@ -64,13 +64,12 @@ if( strArgs.size == 0 ){
 			}
 
 			def p = param.split(":");
-			// replace spaces with underscores in title
+			// replace spaces with hyphens in title
 			if( p[0] == "title")
 			{
 				commonFileName = p[1].replaceAll( " ", "-")
 				p[1] = p[1].replaceAll( " ", "-")
 				defaultConfig.config.title = p[1];
-
 			}
 		}
 	}
@@ -239,7 +238,10 @@ def createFiles( String fileName ){
 def showHelp(){
 	println "\nPost Builder Help:\n";
 	println "\tReguired Argument: 'title'\n";
-
+	println "\tFirst time use example: \n\t\"PostBuilder.groovy title:'Your Post Title'\" \n";
+	println "\t\tNotes:\n\t\tIt is not necessary to use 'goovy' to run the script if:";
+	println "\t\t\tLocation of directory where sript is residing is added to the PATH system variable\n";
+	println "See 'blogger-post-builder-read-me.txt' for more information.";
 	System.exit(0);
 }
 
