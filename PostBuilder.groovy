@@ -1,39 +1,9 @@
-#!/usr/bin/env groovy
+#! /usr/bin/env groovy
 
 
 import sun.font.TrueTypeFont;
 
-/**
-    Concatenate several text files into a single content block
-
-    Take 3 files and put them together:
-        JavaScript
-        CSS
-            and
-        HTML
-
-get path to root folder of the script
-CAUTION:
-this will work only when the script is run from the COMMAND LINE
-if run from the Groovy Console, it will return path to the console and not the script
-SO questions:
-http://stackoverflow.com/questions/11958185/get-path-to-groovy-source-file-at-runtime/11958493#comment15952424_11958493
-http://stackoverflow.com/questions/1163093/how-do-you-get-the-path-of-the-running-script-in-groovy
-WINDOWS:
-to open a given folder in command prompt and run script:
-http://www.sevenforums.com/tutorials/27778-open-command-window-here.html
-
-    1:  Press and hold the Shift key and right click on the folder or drive
-    that you want to open a command prompt with the focus at,
-    and click on Open Command Window Here.
-
-    2:  Release the Shift key.
-
-    3:  type in: groovy name-of-the-script-to-execute.groovy
-
- */
-
-println "Welcome to Groovy Blogger Post Builder"
+println "\nWelcome to Groovy Blogger Post Builder"
 
 // get path to directory we're in
 basePath = new File(".").getCanonicalPath();
@@ -76,29 +46,35 @@ def defaultConfig  = new ConfigSlurper().parse( new File( scriptDir + '/default.
 
 /* START parsing command line args */
 def strArgs = [];
-
-def s = this.args;
-
-print s;
+def s = this.args
 
 s.split(){
 	strArgs << it;
 }
 
-print strArgs;
+if( strArgs.size == 0 ){
+	showHelp()
+	}
+	else
+	{
+		strArgs.each { param ->
+			print( param )
+			if( param == "help"){
+				showHelp();
+			}
 
-strArgs.each { param ->
-	
-	def p = param.split(":");
-	// replace spaces with underscores in title
-	if( p[0] == "title")
-		{
-			commonFileName = p[1].replaceAll( " ", "-")
-			p[1] = p[1].replaceAll( " ", "-")
-			defaultConfig.config.title = p[1];
+			def p = param.split(":");
+			// replace spaces with underscores in title
+			if( p[0] == "title")
+			{
+				commonFileName = p[1].replaceAll( " ", "-")
+				p[1] = p[1].replaceAll( " ", "-")
+				defaultConfig.config.title = p[1];
 
+			}
 		}
-}
+	}
+
 //println defaultConfig;
 
 /* END parsing command */
@@ -258,5 +234,12 @@ def createFiles( String fileName ){
 	new File( basePath + "/" + fileName + ".html").write("");
 	new File( basePath + "/" + fileName +  ".js").write("");
 	new File( basePath + "/" + fileName +  ".css").write("");
+}
+
+def showHelp(){
+	println "\nPost Builder Help:\n";
+	println "\tReguired Argument: 'title'\n";
+
+	System.exit(0);
 }
 

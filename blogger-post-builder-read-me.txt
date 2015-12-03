@@ -1,0 +1,71 @@
+/**
+    Concatenate several text files into a single content block
+
+    Take 3 files and put them together:
+        JavaScript, CSS and HTML
+
+    get path to root folder of the script
+
+    CAUTION:
+        this will work only when the script is run from the COMMAND LINE
+        if run from the Groovy Console, it will return path to the console and not the script
+
+        Stock Overflow questions:
+        http://stackoverflow.com/questions/11958185/get-path-to-groovy-source-file-at-runtime/11958493#comment15952424_11958493
+        http://stackoverflow.com/questions/1163093/how-do-you-get-the-path-of-the-running-script-in-groovy
+
+    WINDOWS:
+        to open a given folder in command prompt and run script:
+        http://www.sevenforums.com/tutorials/27778-open-command-window-here.html
+
+    1:  Press and hold the Shift key and right click on the folder or drive
+        that you want to open a command prompt with the focus at,
+        and click on Open Command Window Here.
+
+    2:  Release the Shift key.
+
+    3:  type in: groovy name-of-the-script-to-execute.groovy
+
+ */
+
+/*------------------------------------------------------
+ *	PROGRAM FLOW
+ *------------------------------------------------------
+ *	1 read required files from post title
+ *
+ * 		CONFIG: if does not exists
+ * 				read in default config
+ * 				create post one from config and save
+ * 		JS, HTML, CSS: if default.* does not exist,
+ * 							create them
+ *
+ *	2 execute based on arguments in config
+ *
+ *
+ *------------------------------------------------------
+ *	 PRE RUN SETUP:
+ *------------------------------------------------------
+ *		 need to have default JS, CSS and CONFIG files:
+ *			 default.css
+ *			 default.js
+ *			 default.config
+ *
+ *
+ *------------------------------------------------------
+ *	 FIRST TIME RUN: - NEW POST
+ *------------------------------------------------------
+ *		 $> PostBuilder.groovy new:'Some Fancy Post Title'
+ *			 1: create a new html file named after title with no spaces: somepost.html
+ *			 2: create a new config file name after title with no spaces: somepost.config
+ *
+ *				 if defualt.css and default.js don't exist
+ *					 create them
+ *------------------------------------------------------
+ *	 SUBSEQUENT RUNS: EXISTING POST
+ *		 $> PostBuilder.groovy
+ *				 "title"	: "bloggerPost",
+ *				 "dev"		: "true",
+ *				 "extJS"	: "false",
+ *				 "create"	: "false",
+ *				 "preview"	: "false"
+ */
