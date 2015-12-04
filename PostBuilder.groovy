@@ -19,18 +19,11 @@ absPath = new File("./").getAbsolutePath();
 scriptDir = new File(getClass().protectionDomain.codeSource.location.path).parent
 scriptFile = getClass().protectionDomain.codeSource.location.path
 
-//println "path script directory: " + scriptDir
-//println "path to script file: " + scriptFile
-
-
-
 def title = "";
 def commonFileName = "";
 
 // use date as part of default post name
 date = new Date();
-
-//println date;
 
 /* 	
  * default config values 
@@ -39,7 +32,25 @@ date = new Date();
  */
 
 def defaultConfig  = new ConfigSlurper().parse( new File( scriptDir + '/default.config').toURI().toURL() );
+//print defaultConfig;
 
+def customConfig;
+
+/* check for existence of custom config based on title of post */
+def customConfigCheck( String configFileName ){
+
+	def customConfigFile = new File( basePath + "/" + configFileName + ".config");
+
+	if( customConfigFile.exists()){
+		customConfig = new ConfigSlurper().parse( new File( configFileName + '.config' ).toURI().toURL() );
+	} else {
+		new File( configFileName + '.config').withWriter{
+			writer ->
+				defaultConfig.writeTo(writer);
+		}
+		customConfig = new ConfigSlurper().parse( new File( configFileName + '.config' ).toURI().toURL() );
+	}
+}/* end customConfigCheck */
 
 
 /* START parsing command line args */
@@ -56,7 +67,7 @@ if( strArgs.size == 0 ){
 	else
 	{
 		strArgs.each { param ->
-			print( param )
+			print( param + "\n")
 			if( param == "help"){
 				showHelp();
 			}
@@ -66,30 +77,21 @@ if( strArgs.size == 0 ){
 			if( p[0] == "title")
 			{
 				commonFileName = p[1].toLowerCase().replaceAll( " ", "-");
-				//p[1] = p[1].replaceAll( " ", " ")
-				defaultConfig.config.title = p[1];
+				customConfigCheck( commonFileName );
+				customConfig.config.title = p[1];
 			}
-		}
+		}/* end param loop */
 	}
+
+/* TEMP DEBUG EXIT */
+System.exit(0);
 
 //println defaultConfig;
 
 /* END parsing command */
 
 
-/* check for existence of custom config based on title of post */
-def customConfig;
-def customConfigFile = new File( basePath + "/" + commonFileName + ".config");
 
-if( customConfigFile.exists()){	
-	customConfig = new ConfigSlurper().parse( new File( commonFileName + '.config' ).toURI().toURL() );
-} else {
-	new File( commonFileName + '.config').withWriter{
-		writer ->
-				defaultConfig.writeTo(writer);
-	}
-	customConfig = new ConfigSlurper().parse( new File( commonFileName + '.config' ).toURI().toURL() );
-}
 
 /* DEFAULT CSS, JS file */
 def defaultCss = new File( scriptDir + "/default.css");
