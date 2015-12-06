@@ -1,6 +1,13 @@
 #! /usr/bin/env groovy
 
 import sun.font.TrueTypeFont;
+/* blogger API jar */
+import com.google.gdata.client.*;
+import com.google.gdata.data.*;
+import com.google.gdata.util.*;
+import java.io.IOException;
+import java.net.URL;
+/* end blogger API jar */
 
 println "\nWelcome to Groovy Blogger Post Builder\n";
 
@@ -32,16 +39,15 @@ date = new Date();
  */
 
 def defaultConfig  = new ConfigSlurper().parse( new File( scriptDir + '/default.config').toURI().toURL() );
-//print defaultConfig;
 
 def customConfig;
 
 /* check for existence of custom config based on title of post */
-def customConfigCheck( String configFileName ){
+def customConfigCheck( String configFileName, groovy.util.ConfigObject defaultConfig ){
 
 	def customConfigFile = new File( basePath + "/" + configFileName + ".config");
 
-	if( customConfigFile.exists()){
+	if( customConfigFile.exists() && customConfigFile.length() > 0 ){
 		customConfig = new ConfigSlurper().parse( new File( configFileName + '.config' ).toURI().toURL() );
 	} else {
 		new File( configFileName + '.config').withWriter{
@@ -50,6 +56,7 @@ def customConfigCheck( String configFileName ){
 		}
 		customConfig = new ConfigSlurper().parse( new File( configFileName + '.config' ).toURI().toURL() );
 	}
+	return customConfig;
 }/* end customConfigCheck */
 
 
@@ -77,14 +84,23 @@ if( strArgs.size == 0 ){
 			if( p[0] == "title")
 			{
 				commonFileName = p[1].toLowerCase().replaceAll( " ", "-");
-				customConfigCheck( commonFileName );
+				customConfig = customConfigCheck( commonFileName, defaultConfig );
 				customConfig.config.title = p[1];
+				customConfig.config.commonFileName = commonFileName;
 			}
 		}/* end param loop */
-	}
+		println "commonFileName:"
+		println commonFileName
 
+		println "\nCUSTOM CONFIG:";
+		print customConfig;
+
+		println "\nDEFAULT CONFIG:";
+		print defaultConfig;
+	}
+this.getClass().classLoader.rootLoader.addURL(new File("/home/tomekpilot/work/web/BloggerPostBuilder/file.jar").toURL())
 /* TEMP DEBUG EXIT */
-System.exit(0);
+//System.exit(0);
 
 //println defaultConfig;
 
@@ -109,6 +125,9 @@ if( !defaultJs.exists()){
 
 /* CUSTOM - HTML CONTENTS */
 def customHtml = new File( basePath + "/" + commonFileName + ".html");
+println "customHtml.exists():"
+println customHtml.exists()
+
 
 /* if it didn't exist before, read in the one just created */
 if( !customHtml.exists()){
@@ -144,7 +163,7 @@ if( defaultCss.exists() && !customCss ){
 
 /* JAVASCRIPT */
 
-if( customConfig.config.dev == true || customConfig.config.extJS == true ){ /* include jQuery from CDN */
+if( customConfig.config.dev == true && customConfig.config.extJS == true ){ /* include jQuery from CDN */
 	/*
 		TODO: move this into config or at least allow for version to be arg based,
 	use some default version is not provided
@@ -174,6 +193,8 @@ if( customConfig.config.create == "all" ){
 
 
 new File( basePath + "/" + commonFileName + "-composit.html").write( outputString.trim() );
+this.updatePost( outputString.trim() );
+
 
 // open composit file in default browser
 // credit goes to: http://www.centerkey.com/java/browser/
@@ -260,3 +281,23 @@ def showHelp(){
 	println "See 'blogger-post-builder-read-me.txt' for more information.";
 	System.exit(0);
 }
+
+def updatePost( String postBody )
+	{
+
+		def json = groovy.json.JsonOutput.toJson( postBody  )
+		print json;
+
+//		def req = 'https://www.googleapis.com/blogger/v3/blogs/\' + pager.creds.blogID + \'/posts?fetchBodies=false&labels=\' + pager.defaults.label + \'&key=AIzaSyChPDh-rh9eJlVlYuLiDW2nvJegZksFhEw'
+
+		def req ="";// 'https://www.googleapis.com/blogger/v3/blogs/6635756895615555070/posts?fetchBodies=false&labels=The%20Disapprovers&key=AIzaSyChPDh-rh9eJlVlYuLiDW2nvJegZksFhEw'
+		//req =  new URL(req).getText();
+		//print req;
+		//req.trustAllCerts()
+		//req.trustAllHosts()
+		//print(req.body())
+		File sourceFile = new File("BloggerTools.groovy");
+		Class groovyClass = new GroovyClassLoader(getClass().getClassLoader()).parseClass(sourceFile);
+		GroovyObject myObject = (GroovyObject) groovyClass.newInstance();
+		myObject.hello()
+	}
